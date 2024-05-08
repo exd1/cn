@@ -1,0 +1,51 @@
+def dijkstra(adj_matrix, num_nodes):
+    routing_tables = {}
+    
+    for source in range(num_nodes):
+        visited = set()
+        distances = [float('inf')] * num_nodes
+        distances[source] = 0
+        
+        while len(visited) < num_nodes:
+            min_dist = float('inf')
+            current_node = None
+            
+            for node in range(num_nodes):
+                if node not in visited and distances[node] < min_dist:
+                    min_dist = distances[node]
+                    current_node = node
+            
+            visited.add(current_node)
+            
+            for neighbor in range(num_nodes):
+                if neighbor not in visited and adj_matrix[current_node][neighbor] > 0:
+                    new_dist = distances[current_node] + adj_matrix[current_node][neighbor]
+                    if new_dist < distances[neighbor]:
+                        distances[neighbor] = new_dist
+                        routing_tables[source] = routing_tables.get(source, {})
+                        routing_tables[source][neighbor] = new_dist
+    
+    return routing_tables
+
+def display_routing_tables(routing_tables):
+    for source, routing_table in routing_tables.items():
+        print(f"Routing table for Node {source + 1}:")
+        print("| Destination | Total Cost |")
+        print("|-------------|------------|")
+        for dest, cost in routing_table.items():
+            print(f"| Node {dest + 1}       | {cost:<10.2f} |")
+        print()
+
+# Input
+num_nodes = int(input("Enter the number of nodes in the network: "))
+print("Enter the connectivity information (adjacency matrix) between nodes (use -1 for no connection):")
+adj_matrix = []
+for _ in range(num_nodes):
+    row = list(map(int, input().split()))
+    adj_matrix.append(row)
+
+# Run Dijkstra's algorithm
+routing_tables = dijkstra(adj_matrix, num_nodes)
+
+# Display routing tables
+display_routing_tables(routing_tables)
