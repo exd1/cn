@@ -1,0 +1,26 @@
+import time
+import random
+
+def stop_and_wait_arq():
+    frame_id = 0
+    while True:
+        print(f"Sender: Sending frame {frame_id}")
+        ack_received = receive_frame(frame_id)
+        if ack_received:
+            print(f"Sender: Received ACK for frame {frame_id}")
+            frame_id += 1
+        else:
+            print(f"Sender: Timeout. Retransmitting frame {frame_id}")
+
+def receive_frame(expected_frame_id):
+    time.sleep(1)
+    if random.random() < 0.1:
+        print(f"Receiver: Frame {expected_frame_id} lost")
+        return False
+    print(f"Receiver: Received frame {expected_frame_id}")
+    time.sleep(1)
+    time.sleep(1)
+    print(f"Receiver: Sending ACK for frame {expected_frame_id}")
+    return True
+
+stop_and_wait_arq()
