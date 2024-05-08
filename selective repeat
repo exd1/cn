@@ -1,0 +1,34 @@
+import time
+import random
+
+WINDOW_SIZE = 3
+frames = list(range(10))
+frame_status = {frame_id: False for frame_id in frames}
+timeout = False
+
+def sender():
+    global timeout
+    while any(not ack for ack in frame_status.values()):
+        if not timeout:
+            for frame_id, acked in frame_status.items():
+                if not acked:
+                    print(f"Sender: Sending frame {frame_id}")
+                    ack_received = receiver(frame_id)
+                    if ack_received is not None:
+                        print(f"Sender: Received ACK for frame {ack_received}")
+                        frame_status[ack_received] = True
+        else:
+            print("Sender: Timeout. Retransmitting frames not yet acknowledged")
+            timeout = False
+
+def receiver(expected_frame_id=None):
+    time.sleep(1)
+    if expected_frame_id is None:
+        return random.choice([frame_id for frame_id, acked in frame_status.items() if not acked])
+    if random.random() < 0.1:
+        print(f"Receiver: ACK for frame {expected_frame_id} lost")
+        return None
+    print(f"Receiver: Received frame {expected_frame_id}")
+    return expected_frame_id
+
+sender()
