@@ -1,0 +1,46 @@
+def even_parity_check(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0])
+
+    row_parity = [sum(row) % 2 == 0 for row in matrix]
+    col_parity = [sum(matrix[i][j] for i in range(rows)) % 2 == 0 for j in range(cols)]
+
+    row_error = [i for i, parity in enumerate(row_parity) if not parity]
+    col_error = [j for j, parity in enumerate(col_parity) if not parity]
+
+    if not row_error and not col_error:
+        print("No errors detected")
+    else:
+        print("Errors detected:")
+        if row_error:
+            print(f"Rows {row_error} have incorrect parity")
+        if col_error:
+            print(f"Columns {col_error} have incorrect parity")
+
+def flip_bit(matrix, row, col):
+    matrix[row][col] = 1 - matrix[row][col]
+
+rows = int(input("Enter number of rows: "))
+cols = int(input("Enter number of columns: "))
+
+matrix = []
+for i in range(rows):
+    row = list(map(int, input(f"Enter elements for row {i+1} (separated by space): ").split()))
+    matrix.append(row)
+
+print("\nOriginal Matrix:")
+for row in matrix:
+    print(row)
+
+even_parity_check(matrix)
+
+row_flip = int(input("Enter row number to flip (0-indexed): "))
+col_flip = int(input("Enter column number to flip (0-indexed): "))
+
+flip_bit(matrix, row_flip, col_flip)
+
+print("\nMatrix with error:")
+for row in matrix:
+    print(row)
+
+even_parity_check(matrix)
