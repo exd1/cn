@@ -1,0 +1,24 @@
+import random
+import math
+from tabulate import tabulate
+
+XL = random.sample(range(0, 50), 10)
+YL = random.sample(range(0, 10), 10)
+print("X Co-ordinates:", XL)
+print("Y Co-ordinates:", YL)
+
+temp = []
+for i in range(len(XL)):
+    d = [math.sqrt((XL[i] - XL[j])**2 + (YL[i] - YL[j])**2) for j in range(len(XL))]
+    temp.append(d)
+
+headers = ["Node {}".format(i + 1) for i in range(len(XL))]
+table = tabulate(temp, headers, tablefmt="github", numalign="center", stralign="center", floatfmt=".5f")
+print(table)
+
+a = float(input("Enter the range for the Neighbour: "))
+for i in range(len(XL)):
+    neighbors = [(j + 1, temp[i][j]) for j in range(len(YL)) if temp[i][j] <= a and i != j]
+    print("\nNeighboring nodes for Node {} within range {}:".format(i + 1, a))
+    for neighbor, distance in neighbors:
+        print(" Node {} at distance {:.5f}".format(neighbor, distance))
