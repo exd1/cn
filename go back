@@ -1,0 +1,38 @@
+import time
+import random
+
+WINDOW_SIZE = 3
+frames = list(range(10))
+next_frame_to_send = 0
+base = 0
+timeout = False
+
+def sender():
+    global base, next_frame_to_send, timeout
+    while base < len(frames):
+        if not timeout:
+            for frame_id in range(next_frame_to_send, min(next_frame_to_send + WINDOW_SIZE, len(frames))):
+                print(f"Sender: Sending frame {frame_id}")
+                receiver(frame_id)
+        ack_received = receiver(base + WINDOW_SIZE - 1)
+        if ack_received:
+            print(f"Sender: Received ACK for frame {base + WINDOW_SIZE - 1}")
+            base += 1
+            next_frame_to_send = base + WINDOW_SIZE
+            timeout = False
+        else:
+            print("Sender: Timeout. Retransmitting frames in window")
+            next_frame_to_send = base
+            timeout = True
+
+def receiver(expected_frame_id=None):
+    time.sleep(1)
+    if expected_frame_id is None:
+        return True
+    if random.random() < 0.1:
+        print(f"Receiver: ACK for frame {expected_frame_id} lost")
+        return False
+    print(f"Receiver: Received frame {expected_frame_id}")
+    return True
+
+sender()
