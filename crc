@@ -1,0 +1,26 @@
+def crc(data, generator_poly):
+    crc_register = 0
+    data = data + '0' * (len(generator_poly) - 1)
+    for bit in data:
+        crc_register ^= int(bit)
+        if crc_register & 1:
+            crc_register ^= int(generator_poly, 2)
+        crc_register >>= 1
+    crc_code = bin(crc_register)[2:]
+    crc_code = '0' * (len(generator_poly) - 1 - len(crc_code)) + crc_code
+    return crc_code
+
+def verify(data, generator_poly, received_crc):
+    calculated_crc = crc(data, generator_poly)
+    diff = len(received_crc) - len(calculated_crc)
+    if diff > 0:
+        calculated_crc = '0' * diff + calculated_crc
+    return calculated_crc == received_crc
+
+# Example usage
+data = "11010011101100"
+generator_poly = "1011"
+crc_code = crc(data, generator_poly)
+received_data = data + crc_code
+is_correct = verify(received_data, generator_poly, crc_code)
+print("Is CRC correct?", is_correct)
